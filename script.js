@@ -166,15 +166,19 @@ function applyActivePhotoTransforms() {
 
   const img = document.getElementById(`prev-img-${boxId}`);
   const blurBackdrop = document.getElementById(`bg-blur-${boxId}`);
+  const box = img ? img.parentElement : null;
 
-  img.style.objectFit = state.fit;
-  img.style.transform = `scale(${state.zoom}) translate(${state.panX}px, ${state.panY}px)`;
-  img.style.filter = `blur(${state.blur}px) brightness(${1 - state.dim})`;
+  if (img) {
+    img.style.objectFit = state.fit;
+    img.style.transform = `scale(${state.zoom}) translate(${state.panX}px, ${state.panY}px)`;
+  }
 
-  if (state.fit === 'contain') {
-    blurBackdrop.style.display = 'block';
-  } else {
-    blurBackdrop.style.display = 'none';
+  if (box) {
+    box.style.filter = `blur(${state.blur}px) brightness(${1 - state.dim})`;
+  }
+
+  if (blurBackdrop) {
+    blurBackdrop.style.display = (state.fit === 'contain') ? 'block' : 'none';
   }
 }
 
@@ -186,12 +190,6 @@ function applyActivePhotoTransforms() {
 // INTEGRATED LAYOUT STUDIO CONTROLS
 const presetBtns = document.querySelectorAll('.preset-btn');
 const bgSelect = document.getElementById('bg-style-select');
-
-const prev1 = document.getElementById('prev-img-1');
-const prev2 = document.getElementById('prev-img-2');
-const prev3 = document.getElementById('prev-img-3');
-const prev4 = document.getElementById('prev-img-4');
-const prev5 = document.getElementById('prev-img-5');
 
 document.getElementById('img-input-1').addEventListener('change', (e) => loadImg(e, 1));
 document.getElementById('img-input-2').addEventListener('change', (e) => loadImg(e, 2));
@@ -215,55 +213,4 @@ function loadImg(event, boxId) {
 
 presetBtns.forEach((btn) => {
   btn.addEventListener('click', () => {
-    presetBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    updateCanvasClasses();
-  });
-});
-
-bgSelect.addEventListener('change', () => {
-  updateCanvasClasses();
-});
-
-function updateCanvasClasses() {
-  const activeLayout = document.querySelector('.preset-btn.active').dataset.layout;
-  const isHook = !viewHook.classList.contains('hidden');
-  const modeClass = isHook ? 'mode-hook' : '';
-  carouselCanvas.className = `carousel-canvas ${modeClass} ${activeLayout} ${bgSelect.value}`;
-}
-
-document.getElementById('accent-color').addEventListener('input', (e) => {
-  const color = e.target.value;
-  document.querySelectorAll('.inset-stack-right .box-4, .inset-stack-right .box-5, .layout-3 .box-2').forEach(box => box.style.borderColor = color);
-});
-
-function applyActivePhotoTransforms() {
-  const boxId = activeBoxId;
-  const state = photoStates[boxId];
-
-  state.fit = selectFitMode.value;
-  state.zoom = parseFloat(sliderProdZoom.value);
-  state.panX = parseFloat(sliderProdPanX.value);
-  state.panY = parseFloat(sliderProdPanY.value);
-  state.dim = parseFloat(sliderProdDim.value);
-  state.blur = parseFloat(sliderProdBlur.value);
-
-  const img = document.getElementById(`prev-img-${boxId}`);
-  const blurBackdrop = document.getElementById(`bg-blur-${boxId}`);
-  const box = img.parentElement; // Target the parent container
-
-  // Object fit stays on the image
-  img.style.objectFit = state.fit;
-  
-  // Apply transform directly using scale/translate on the image
-  img.style.transform = `scale(${state.zoom}) translate(${state.panX}px, ${state.panY}px)`;
-
-  // Apply filter & brightness to the container box or wrapper instead
-  box.style.filter = `blur(${state.blur}px) brightness(${1 - state.dim})`;
-
-  if (state.fit === 'contain') {
-    blurBackdrop.style.display = 'block';
-  } else {
-    blurBackdrop.style.display = 'none';
-  }
-}
+    presetBtns.forEach(b => b.classList.
