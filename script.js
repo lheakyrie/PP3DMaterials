@@ -237,16 +237,33 @@ document.getElementById('accent-color').addEventListener('input', (e) => {
   document.querySelectorAll('.inset-stack-right .box-4, .inset-stack-right .box-5, .layout-3 .box-2').forEach(box => box.style.borderColor = color);
 });
 
-// EXPORT CANVAS AS PNG
-document.getElementById('download-carousel-btn').addEventListener('click', () => {
-  html2canvas(carouselCanvas, { 
-    scale: 4,
-    backgroundColor: null // Set to null for a transparent background
-  }).then((cvs) => {
-    const link = document.createElement('a');
-    const isHook = !viewHook.classList.contains('hidden');
-    link.download = isHook ? 'carousel-slide-1-hook.png' : 'carousel-product-slide.png';
-    link.href = cvs.toDataURL('image/png');
-    link.click();
-  });
-});
+function applyActivePhotoTransforms() {
+  const boxId = activeBoxId;
+  const state = photoStates[boxId];
+
+  state.fit = selectFitMode.value;
+  state.zoom = parseFloat(sliderProdZoom.value);
+  state.panX = parseFloat(sliderProdPanX.value);
+  state.panY = parseFloat(sliderProdPanY.value);
+  state.dim = parseFloat(sliderProdDim.value);
+  state.blur = parseFloat(sliderProdBlur.value);
+
+  const img = document.getElementById(`prev-img-${boxId}`);
+  const blurBackdrop = document.getElementById(`bg-blur-${boxId}`);
+  const box = img.parentElement; // Target the parent container
+
+  // Object fit stays on the image
+  img.style.objectFit = state.fit;
+  
+  // Apply transform directly using scale/translate on the image
+  img.style.transform = `scale(${state.zoom}) translate(${state.panX}px, ${state.panY}px)`;
+
+  // Apply filter & brightness to the container box or wrapper instead
+  box.style.filter = `blur(${state.blur}px) brightness(${1 - state.dim})`;
+
+  if (state.fit === 'contain') {
+    blurBackdrop.style.display = 'block';
+  } else {
+    blurBackdrop.style.display = 'none';
+  }
+}
