@@ -240,6 +240,7 @@ document.getElementById('accent-color').addEventListener('input', (e) => {
 // EXPORT CANVAS AS PNG
 document.getElementById('download-carousel-btn').addEventListener('click', () => {
   html2canvas(carouselCanvas, { scale: 4 }).then((cvs) => {
+    backgroundColor: null
     const link = document.createElement('a');
     const isHook = !viewHook.classList.contains('hidden');
     link.download = isHook ? 'carousel-slide-1-hook.png' : 'carousel-product-slide.png';
